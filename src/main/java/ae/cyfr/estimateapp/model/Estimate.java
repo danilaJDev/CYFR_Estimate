@@ -13,8 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "estimates")
 @Getter
@@ -35,10 +33,10 @@ public class Estimate {
     private Double coefficient;
 
     @Transient
-    private BigDecimal total;
+    private boolean selected;
 
     @Transient
-    private boolean selected;
+    private double total;
 
     @NotBlank(message = "Unit is mandatory")
     private String unit;
