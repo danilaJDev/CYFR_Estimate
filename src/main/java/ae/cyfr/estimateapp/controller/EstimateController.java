@@ -40,20 +40,33 @@ public class EstimateController {
     }
 
     @PostMapping("/estimate/update")
-    public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorks,
-                                 @RequestParam(required = false) List<Double> quantity,
-                                 @RequestParam(required = false) List<Double> coefficient,
+    public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorkIds,
+                                 @RequestParam(required = false) List<Long> workIds,
+                                 @RequestParam(required = false) List<Double> quantities,
+                                 @RequestParam(required = false) List<Double> coefficients,
                                  @ModelAttribute("estimates") List<Estimate> estimates) {
+
         estimates.clear();
-        if (selectedWorks != null) {
-            for (int i = 0; i < selectedWorks.size(); i++) {
+
+        if (selectedWorkIds == null || selectedWorkIds.isEmpty()) {
+            return "redirect:/estimate";
+        }
+
+        // Используем отдельный индекс для actualData
+        int actualIndex = 0;
+        for (int i = 0; i < workIds.size(); i++) {
+            Long currentWorkId = workIds.get(i);
+            if (selectedWorkIds.contains(currentWorkId)) {
                 Estimate item = new Estimate();
-                item.setWork(workService.getWorkById(selectedWorks.get(i)));
-                item.setQuantity(quantity.get(i));
-                item.setCoefficient(coefficient.get(i));
+                item.setWork(workService.getWorkById(currentWorkId));
+                item.setQuantity(quantities.get(actualIndex));
+                item.setCoefficient(coefficients.get(actualIndex));
+                item.setTotalCost(item.getQuantity() * item.getCoefficient() * item.getWork().getClientPrice());
                 estimates.add(item);
+                actualIndex++;
             }
         }
+
         return "redirect:/estimate";
     }
 

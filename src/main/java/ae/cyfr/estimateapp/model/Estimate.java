@@ -29,4 +29,6 @@ public class Estimate {
     private Double quantity;
 
     private Double coefficient;
+
+    private Double totalCost;
 }
