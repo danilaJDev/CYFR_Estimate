@@ -36,4 +36,8 @@ public class WorkService {
     public Section getSectionById(Long id) {
         return sectionRepository.findById(id).orElse(null);
     }
+
+    public Work getWorkById(Long id) {
+        return workRepository.findById(id).orElse(null);
+    }
 }
