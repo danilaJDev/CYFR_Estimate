@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Works</title>
+</head>
+<body>
+<h1>Sections and Works</h1>
+
+<h2>Add Section</h2>
+<form th:action="@{/sections}" th:object="${newSection}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Section Name"/>
+    <button type="submit">Add Section</button>
+</form>
+
+<hr/>
+
+<h2>Add Work</h2>
+<form th:action="@{/works}" th:object="${newWork}" method="post">
+    <select name="sectionId">
+        <option th:each="section : ${sections}" th:value="${section.id}" th:text="${section.name}"></option>
+    </select>
+    <input type="text" th:field="*{name}" placeholder="Work Name"/>
+    <input type="text" th:field="*{unit}" placeholder="Unit"/>
+    <input type="number" step="0.01" th:field="*{costPrice}" placeholder="Cost Price"/>
+    <input type="number" step="0.01" th:field="*{customerPrice}" placeholder="Customer Price"/>
+    <button type="submit">Add Work</button>
+</form>
+
+<hr/>
+
+<h2>All Sections and Works</h2>
+<div th:each="section : ${sections}">
+    <h3 th:text="${section.name}"></h3>
+    <ul>
+        <li th:each="work : ${section.works}" th:text="${work.name} + ' (' + ${work.unit} + ')'"></li>
+    </ul>
+</div>
+
+<a href="/estimate">Go to Estimate</a>
+
+</body>
+</html>
