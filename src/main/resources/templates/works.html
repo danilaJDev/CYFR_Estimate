@@ -2,7 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Работы</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-bottom: 40px;
+        }
+
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .form-control,
+        .btn {
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            border-right: none;
+        }
+
+        @media (max-width: 767.98px) {
+            .form-row > div {
+                margin-bottom: 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            h1, h2, h3 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -14,7 +52,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="/works">Работы <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/works">Работы</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/estimate">Смета</a>
@@ -23,66 +61,68 @@
     </div>
 </nav>
 
-<div class="container">
-    <h1 class="mt-4">Разделы и работы</h1>
+<div class="container mt-4">
+    <h1>Разделы и работы</h1>
 
     <div class="row">
         <div class="col-md-6">
-            <h2 class="mt-4">Добавить раздел</h2>
-            <form th:action="@{/sections}" th:object="${newSection}" method="post" class="mb-4">
+            <h2>Добавить раздел</h2>
+            <form th:action="@{/sections}" th:object="${newSection}" method="post" class="mb-3">
                 <div class="input-group">
-                    <input type="text" th:field="*{name}" placeholder="Название раздела" class="form-control"/>
+                    <input type="text" th:field="*{name}" placeholder="Название раздела" class="form-control" required/>
                     <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">Добавить раздел</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
                     </div>
                 </div>
             </form>
         </div>
+
         <div class="col-md-6">
-            <h2 class="mt-4">Добавить работу</h2>
+            <h2>Добавить работу</h2>
             <form th:action="@{/works}" th:object="${newWork}" method="post">
                 <div class="form-group">
-                    <label for="sectionId">Раздел</label>
-                    <select id="sectionId" name="sectionId" class="form-control">
-                        <option th:each="section : ${sections}" th:value="${section.id}"
-                                th:text="${section.name}"></option>
+                    <select id="sectionId" name="sectionId" class="form-control" required>
+                        <option value="" disabled selected>Выберите раздел</option>
+                        <option th:each="section : ${sections}" th:value="${section.id}" th:text="${section.name}"></option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <input type="text" th:field="*{name}" placeholder="Название работы" class="form-control"/>
+                <div class="form-row">
+                    <div class="col">
+                        <input type="text" th:field="*{name}" placeholder="Название работы" class="form-control" required/>
+                    </div>
+                    <div class="col">
+                        <input type="text" th:field="*{unit}" placeholder="Ед. изм." class="form-control" required/>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" th:field="*{unit}" placeholder="Ед. изм." class="form-control"/>
+                <div class="form-row mt-2">
+                    <div class="col">
+                        <input type="number" step="0.01" th:field="*{costPrice}" placeholder="Себестоимость"
+                               class="form-control" required/>
+                    </div>
+                    <div class="col">
+                        <input type="number" step="0.01" th:field="*{clientPrice}" placeholder="Цена для заказчика"
+                               class="form-control" required/>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="number" step="0.01" th:field="*{costPrice}" placeholder="Себестоимость"
-                           class="form-control"/>
-                </div>
-                <div class="form-group">
-                    <input type="number" step="0.01" th:field="*{clientPrice}" placeholder="Цена для заказчика"
-                           class="form-control"/>
-                </div>
-                <button type="submit" class="btn btn-primary">Добавить работу</button>
+                <button type="submit" class="btn btn-primary mt-3">Добавить работу</button>
             </form>
         </div>
     </div>
 
     <hr/>
 
-    <h2 class="mt-4">Все разделы и работы</h2>
-    <div id="sections">
-        <div th:each="section : ${sections}">
-            <div class="d-flex justify-content-between align-items-center">
-                <h3 th:text="${section.name}"></h3>
-                <div>
-                    <a th:href="@{/sections/delete/{id}(id=${section.id})}" class="btn btn-danger btn-sm">Удалить
-                        раздел</a>
-                </div>
-            </div>
-            <table class="table table-striped">
-                <thead class="thead-dark">
+    <h2>Список работ</h2>
+    <div th:each="section : ${sections}" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 th:text="${section.name}" class="mb-0"></h3>
+            <a th:href="@{/sections/delete/{id}(id=${section.id})}" class="btn btn-outline-danger btn-sm">Удалить раздел</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="thead-light">
                 <tr>
-                    <th>Название работы</th>
+                    <th>Название</th>
                     <th>Ед. изм.</th>
                     <th>Себестоимость</th>
                     <th>Цена для заказчика</th>
@@ -96,7 +136,7 @@
                     <td th:text="${work.costPrice}"></td>
                     <td th:text="${work.clientPrice}"></td>
                     <td>
-                        <a th:href="@{/works/delete/{id}(id=${work.id})}" class="btn btn-danger btn-sm">Удалить</a>
+                        <a th:href="@{/works/delete/{id}(id=${work.id})}" class="btn btn-outline-danger btn-sm">Удалить</a>
                     </td>
                 </tr>
                 </tbody>

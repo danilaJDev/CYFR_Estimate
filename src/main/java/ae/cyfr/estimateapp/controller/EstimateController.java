@@ -29,7 +29,7 @@ public class EstimateController {
     private EstimateService estimateService;
 
     @ModelAttribute("estimates")
-    public List<Estimate> getEstimateItems() {
+    public List<Estimate> getEstimates() {
         return new ArrayList<>();
     }
 
@@ -58,7 +58,7 @@ public class EstimateController {
     }
 
     @GetMapping("/estimate/export")
-    public ResponseEntity<byte[]> exportEstimate(@ModelAttribute("estimateItems") List<Estimate> estimates) throws IOException {
+    public ResponseEntity<byte[]> exportEstimate(@ModelAttribute("estimates") List<Estimate> estimates) throws IOException {
         byte[] excelData = estimateService.createEstimateExcel(estimates);
 
         HttpHeaders headers = new HttpHeaders();
