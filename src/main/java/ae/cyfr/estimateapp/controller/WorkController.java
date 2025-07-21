@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,6 +37,18 @@ public class WorkController {
         Section section = workService.getSectionById(sectionId);
         newWork.setSection(section);
         workService.saveWork(newWork);
+        return "redirect:/works";
+    }
+
+    @GetMapping("/works/delete/{id}")
+    public String deleteWork(@PathVariable Long id) {
+        workService.deleteWork(id);
+        return "redirect:/works";
+    }
+
+    @GetMapping("/sections/delete/{id}")
+    public String deleteSection(@PathVariable Long id) {
+        workService.deleteSection(id);
         return "redirect:/works";
     }
 }

@@ -43,15 +43,15 @@ public class EstimateController {
     public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorks,
                                  @RequestParam(required = false) List<Double> quantity,
                                  @RequestParam(required = false) List<Double> coefficient,
-                                 @ModelAttribute("estimateItems") List<Estimate> estimateItems) {
-        estimateItems.clear();
+                                 @ModelAttribute("estimates") List<Estimate> estimates) {
+        estimates.clear();
         if (selectedWorks != null) {
             for (int i = 0; i < selectedWorks.size(); i++) {
                 Estimate item = new Estimate();
                 item.setWork(workService.getWorkById(selectedWorks.get(i)));
                 item.setQuantity(quantity.get(i));
                 item.setCoefficient(coefficient.get(i));
-                estimateItems.add(item);
+                estimates.add(item);
             }
         }
         return "redirect:/estimate";
