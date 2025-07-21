@@ -3,7 +3,7 @@ package ae.cyfr.estimateapp.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import ae.cyfr.estimateapp.model.EstimateItem;
+import ae.cyfr.estimateapp.model.Estimate;
 import ae.cyfr.estimateapp.service.EstimateService;
 import ae.cyfr.estimateapp.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@SessionAttributes("estimateItems")
+@SessionAttributes("estimates")
 public class EstimateController {
 
     @Autowired
@@ -28,8 +28,8 @@ public class EstimateController {
     @Autowired
     private EstimateService estimateService;
 
-    @ModelAttribute("estimateItems")
-    public List<EstimateItem> getEstimateItems() {
+    @ModelAttribute("estimates")
+    public List<Estimate> getEstimateItems() {
         return new ArrayList<>();
     }
 
@@ -43,11 +43,11 @@ public class EstimateController {
     public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorks,
                                  @RequestParam(required = false) List<Double> quantity,
                                  @RequestParam(required = false) List<Double> coefficient,
-                                 @ModelAttribute("estimateItems") List<EstimateItem> estimateItems) {
+                                 @ModelAttribute("estimateItems") List<Estimate> estimateItems) {
         estimateItems.clear();
         if (selectedWorks != null) {
             for (int i = 0; i < selectedWorks.size(); i++) {
-                EstimateItem item = new EstimateItem();
+                Estimate item = new Estimate();
                 item.setWork(workService.getWorkById(selectedWorks.get(i)));
                 item.setQuantity(quantity.get(i));
                 item.setCoefficient(coefficient.get(i));
@@ -58,8 +58,8 @@ public class EstimateController {
     }
 
     @GetMapping("/estimate/export")
-    public ResponseEntity<byte[]> exportEstimate(@ModelAttribute("estimateItems") List<EstimateItem> estimateItems) throws IOException {
-        byte[] excelData = estimateService.createEstimateExcel(estimateItems);
+    public ResponseEntity<byte[]> exportEstimate(@ModelAttribute("estimateItems") List<Estimate> estimates) throws IOException {
+        byte[] excelData = estimateService.createEstimateExcel(estimates);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

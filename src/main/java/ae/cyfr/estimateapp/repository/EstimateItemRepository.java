@@ -1,9 +1,9 @@
 package ae.cyfr.estimateapp.repository;
 
-import ae.cyfr.estimateapp.model.EstimateItem;
+import ae.cyfr.estimateapp.model.Estimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EstimateItemRepository extends JpaRepository<EstimateItem, Long> {
+public interface EstimateItemRepository extends JpaRepository<Estimate, Long> {
 }
