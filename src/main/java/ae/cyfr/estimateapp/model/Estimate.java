@@ -7,9 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "estimates")
@@ -29,4 +33,13 @@ public class Estimate {
     private Double quantity;
 
     private Double coefficient;
+
+    @Transient
+    private BigDecimal total;
+
+    @Transient
+    private boolean selected;
+
+    @NotBlank(message = "Unit is mandatory")
+    private String unit;
 }

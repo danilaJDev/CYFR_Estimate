@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import ae.cyfr.estimateapp.model.Estimate;
+import ae.cyfr.estimateapp.model.EstimateWrapper;
 import ae.cyfr.estimateapp.service.EstimateService;
 import ae.cyfr.estimateapp.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
+import java.math.BigDecimal;
+import java.util.stream.Collectors;
 
 @Controller
 @SessionAttributes("estimates")
@@ -36,24 +42,33 @@ public class EstimateController {
     @GetMapping("/estimate")
     public String showEstimatePage(Model model) {
         model.addAttribute("sections", workService.getAllSections());
+        model.addAttribute("estimateWrapper", new EstimateWrapper());
         return "estimate";
     }
 
     @PostMapping("/estimate/update")
-    public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorks,
-                                 @RequestParam(required = false) List<Double> quantity,
-                                 @RequestParam(required = false) List<Double> coefficient,
-                                 @ModelAttribute("estimates") List<Estimate> estimates) {
-        estimates.clear();
-        if (selectedWorks != null) {
-            for (int i = 0; i < selectedWorks.size(); i++) {
-                Estimate item = new Estimate();
-                item.setWork(workService.getWorkById(selectedWorks.get(i)));
-                item.setQuantity(quantity.get(i));
-                item.setCoefficient(coefficient.get(i));
-                estimates.add(item);
-            }
+    public String updateEstimate(@Valid @ModelAttribute EstimateWrapper estimateWrapper,
+                                 BindingResult bindingResult,
+                                 @ModelAttribute("estimates") List<Estimate> estimates,
+                                 Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("sections", workService.getAllSections());
+            return "estimate";
         }
+
+        estimates.clear();
+        List<Estimate> selectedEstimates = estimateWrapper.getEstimates().stream()
+                .filter(Estimate::isSelected)
+                .collect(Collectors.toList());
+
+        for (Estimate item : selectedEstimates) {
+            item.setWork(workService.getWorkById(item.getWork().getId()));
+            item.setTotal(BigDecimal.valueOf(item.getQuantity())
+                    .multiply(item.getWork().getClientPrice())
+                    .multiply(BigDecimal.valueOf(item.getCoefficient())));
+            estimates.add(item);
+        }
+
         return "redirect:/estimate";
     }
 

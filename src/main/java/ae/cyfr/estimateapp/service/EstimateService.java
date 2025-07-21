@@ -56,6 +56,9 @@ public class EstimateService {
         dataStyle.setBorderTop(org.apache.poi.ss.usermodel.BorderStyle.THIN);
         dataStyle.setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle.THIN);
         dataStyle.setBorderRight(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+        dataStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+        dataStyle.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+
 
         org.apache.poi.ss.usermodel.CellStyle numericStyle = workbook.createCellStyle();
         numericStyle.setFont(dataFont);
@@ -64,6 +67,8 @@ public class EstimateService {
         numericStyle.setBorderTop(org.apache.poi.ss.usermodel.BorderStyle.THIN);
         numericStyle.setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle.THIN);
         numericStyle.setBorderRight(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+        numericStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+        numericStyle.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
 
         // Header
         Row headerRow = sheet.createRow(0);
