@@ -1,13 +1,12 @@
-package com.example.estimateapp.service;
-
-import com.example.estimateapp.model.Section;
-import com.example.estimateapp.model.Work;
-import com.example.estimateapp.repository.SectionRepository;
-import com.example.estimateapp.repository.WorkRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+package ae.cyfr.estimateapp.service;
 
 import java.util.List;
+import ae.cyfr.estimateapp.model.Section;
+import ae.cyfr.estimateapp.model.Work;
+import ae.cyfr.estimateapp.repository.SectionRepository;
+import ae.cyfr.estimateapp.repository.WorkRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class WorkService {

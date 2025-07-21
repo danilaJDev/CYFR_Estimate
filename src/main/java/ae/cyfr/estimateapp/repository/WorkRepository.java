@@ -1,6 +1,6 @@
-package com.example.estimateapp.repository;
+package ae.cyfr.estimateapp.repository;
 
-import com.example.estimateapp.model.Work;
+import ae.cyfr.estimateapp.model.Work;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

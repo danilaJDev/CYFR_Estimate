@@ -1,8 +1,8 @@
-package com.example.estimateapp.controller;
+package ae.cyfr.estimateapp.controller;
 
-import com.example.estimateapp.model.Section;
-import com.example.estimateapp.model.Work;
-import com.example.estimateapp.service.WorkService;
+import ae.cyfr.estimateapp.model.Section;
+import ae.cyfr.estimateapp.model.Work;
+import ae.cyfr.estimateapp.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

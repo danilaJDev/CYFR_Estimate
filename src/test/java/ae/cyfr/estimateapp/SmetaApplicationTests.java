@@ -1,4 +1,4 @@
-package ae.cyfr.smeta;
+package ae.cyfr.estimateapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

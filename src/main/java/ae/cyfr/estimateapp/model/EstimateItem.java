@@ -1,6 +1,11 @@
-package com.example.estimateapp.model;
+package ae.cyfr.estimateapp.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class EstimateItem {
@@ -15,8 +20,6 @@ public class EstimateItem {
 
     private Double quantity;
     private Double coefficient;
-
-    // Getters and setters
 
     public Long getId() {
         return id;

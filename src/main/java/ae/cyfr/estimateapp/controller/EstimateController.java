@@ -1,19 +1,22 @@
-package com.example.estimateapp.controller;
+package ae.cyfr.estimateapp.controller;
 
-import com.example.estimateapp.model.EstimateItem;
-import com.example.estimateapp.service.EstimateService;
-import com.example.estimateapp.service.WorkService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import ae.cyfr.estimateapp.model.EstimateItem;
+import ae.cyfr.estimateapp.service.EstimateService;
+import ae.cyfr.estimateapp.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @SessionAttributes("estimateItems")
