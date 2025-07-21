@@ -39,13 +39,21 @@ public class EstimateController {
         return "estimate";
     }
 
-    @PostMapping("/estimate/add")
-    public String addEstimateItem(@RequestParam Long workId, @RequestParam Double quantity, @RequestParam(defaultValue = "1.0") Double coefficient, @ModelAttribute("estimateItems") List<EstimateItem> estimateItems) {
-        EstimateItem item = new EstimateItem();
-        item.setWork(workService.getAllWorks().stream().filter(w -> w.getId().equals(workId)).findFirst().orElse(null));
-        item.setQuantity(quantity);
-        item.setCoefficient(coefficient);
-        estimateItems.add(item);
+    @PostMapping("/estimate/update")
+    public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorks,
+                                 @RequestParam(required = false) List<Double> quantity,
+                                 @RequestParam(required = false) List<Double> coefficient,
+                                 @ModelAttribute("estimateItems") List<EstimateItem> estimateItems) {
+        estimateItems.clear();
+        if (selectedWorks != null) {
+            for (int i = 0; i < selectedWorks.size(); i++) {
+                EstimateItem item = new EstimateItem();
+                item.setWork(workService.getWorkById(selectedWorks.get(i)));
+                item.setQuantity(quantity.get(i));
+                item.setCoefficient(coefficient.get(i));
+                estimateItems.add(item);
+            }
+        }
         return "redirect:/estimate";
     }
 
