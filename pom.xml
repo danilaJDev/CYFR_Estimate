@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>ae.cyfr</groupId>
-    <artifactId>smeta</artifactId>
+    <artifactId>EstimateApp</artifactId>
     <version>0.1</version>
     <name>smeta</name>
     <description>Demo project for Spring Boot</description>
@@ -51,6 +51,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -61,7 +62,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.4.0</version>
+            <version>5.2.5</version>
         </dependency>
     </dependencies>
 

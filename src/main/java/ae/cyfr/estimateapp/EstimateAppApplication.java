@@ -1,13 +1,13 @@
-package ae.cyfr.smeta;
+package ae.cyfr.estimateapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SmetaApplication {
+public class EstimateAppApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SmetaApplication.class, args);
+        SpringApplication.run(EstimateAppApplication.class, args);
     }
 
 }
