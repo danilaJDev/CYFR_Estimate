@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,9 +39,13 @@ public class EstimateController {
     }
 
     @GetMapping("/estimate")
-    public String showEstimatePage(Model model) {
+    public String showEstimatePage(Model model, @ModelAttribute("estimates") List<Estimate> estimates) {
         model.addAttribute("sections", workService.getAllSections());
-        model.addAttribute("estimateWrapper", new EstimateWrapper());
+        EstimateWrapper estimateWrapper = new EstimateWrapper();
+        if (!estimates.isEmpty()) {
+            estimateWrapper.setEstimates(estimates);
+        }
+        model.addAttribute("estimateWrapper", estimateWrapper);
         return "estimate";
     }
 
@@ -63,9 +66,8 @@ public class EstimateController {
 
         for (Estimate item : selectedEstimates) {
             item.setWork(workService.getWorkById(item.getWork().getId()));
-            item.setTotal(BigDecimal.valueOf(item.getQuantity())
-                    .multiply(item.getWork().getClientPrice())
-                    .multiply(BigDecimal.valueOf(item.getCoefficient())));
+            double total = item.getQuantity() * item.getWork().getClientPrice().doubleValue() * item.getCoefficient();
+            item.setTotal(Math.round(total * 100.0) / 100.0);
             estimates.add(item);
         }
 

@@ -92,18 +92,15 @@ public class EstimateService {
             row.createCell(2).setCellValue(item.getQuantity());
             row.getCell(2).setCellStyle(numericStyle);
 
-            BigDecimal clientPrice = item.getWork().getClientPrice();
-            row.createCell(3).setCellValue(clientPrice.doubleValue());
+            double clientPrice = item.getWork().getClientPrice().doubleValue();
+            row.createCell(3).setCellValue(clientPrice);
             row.getCell(3).setCellStyle(numericStyle);
 
             row.createCell(4).setCellValue(item.getCoefficient());
             row.getCell(4).setCellStyle(numericStyle);
 
-            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
-            BigDecimal coefficient = BigDecimal.valueOf(item.getCoefficient());
-            BigDecimal totalCost = clientPrice.multiply(quantity).multiply(coefficient);
-
-            row.createCell(5).setCellValue(totalCost.doubleValue());
+            double totalCost = clientPrice * item.getQuantity() * item.getCoefficient();
+            row.createCell(5).setCellValue(Math.round(totalCost * 100.0) / 100.0);
             row.getCell(5).setCellStyle(numericStyle);
         }
 
