@@ -1,54 +1,40 @@
-package ae.cyfr.estimateapp.controller;
+// package ae.cyfr.estimateapp.controller;
 
-import ae.cyfr.estimateapp.model.Section;
-import ae.cyfr.estimateapp.model.Work;
-import ae.cyfr.estimateapp.service.WorkService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+// import ae.cyfr.estimateapp.model.Work;
+// import ae.cyfr.estimateapp.service.WorkService;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.stereotype.Controller;
+// import org.springframework.ui.Model;
+// import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
-public class WorkController {
+// @Controller
+// public class WorkController {
 
-    @Autowired
-    private WorkService workService;
+//     @Autowired
+//     private WorkService workService;
 
-    @GetMapping("/works")
-    public String showWorksPage(Model model) {
-        model.addAttribute("sections", workService.getAllSections());
-        model.addAttribute("newSection", new Section());
-        model.addAttribute("newWork", new Work());
-        return "works";
-    }
+//     @GetMapping("/works")
+//     public String showWorksPage(Model model) {
+//         model.addAttribute("works", workService.getAllWorks());
+//         model.addAttribute("sections", workService.getAllSections());
+//         return "works";
+//     }
 
-    @PostMapping("/sections")
-    public String addSection(@ModelAttribute Section newSection) {
-        workService.saveSection(newSection);
-        return "redirect:/works";
-    }
-
-    @PostMapping("/works")
-    public String addWork(@ModelAttribute Work newWork, @RequestParam Long sectionId) {
-        Section section = workService.getSectionById(sectionId);
-        newWork.setSection(section);
-        workService.saveWork(newWork);
-        return "redirect:/works";
-    }
-
-    @GetMapping("/works/delete/{id}")
-    public String deleteWork(@PathVariable Long id) {
-        workService.deleteWork(id);
-        return "redirect:/works";
-    }
-
-    @GetMapping("/sections/delete/{id}")
-    public String deleteSection(@PathVariable Long id) {
-        workService.deleteSection(id);
-        return "redirect:/works";
-    }
-}
+//     @PostMapping("/works/add")
+//     public String addWork(@RequestParam String name,
+//                           @RequestParam String unit,
+//                           @RequestParam Double costPrice,
+//                           @RequestParam Double clientPrice,
+//                           @RequestParam Long sectionId) {
+//         Work newWork = new Work();
+//         // newWork.setName(name);
+//         // newWork.setUnit(unit);
+//         // newWork.setCostPrice(new java.math.BigDecimal(costPrice));
+//         // newWork.setClientPrice(new java.math.BigDecimal(clientPrice));
+//         // // newWork.setSection(workService.getSectionById(sectionId));
+//         // // workService.saveWork(newWork);
+//         return "redirect:/works";
+//     }
+// }
