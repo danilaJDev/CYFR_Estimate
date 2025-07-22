@@ -105,7 +105,8 @@ public class EstimateService {
 
             // 3. Стоимость за единицу
             Cell priceCell = row.createCell(2);
-            priceCell.setCellValue(item.getWork().getClientPrice());
+            double clientPriceWithCoeff = item.getWork().getClientPrice() * item.getCoefficient();
+            priceCell.setCellValue(clientPriceWithCoeff);
             priceCell.setCellStyle(numericStyle);
 
             // 4. Итоговая сумма
