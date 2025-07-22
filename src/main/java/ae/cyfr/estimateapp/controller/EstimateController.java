@@ -52,7 +52,6 @@ public class EstimateController {
             return "redirect:/estimate";
         }
 
-        // Используем отдельный индекс для actualData
         int actualIndex = 0;
         for (int i = 0; i < workIds.size(); i++) {
             Long currentWorkId = workIds.get(i);

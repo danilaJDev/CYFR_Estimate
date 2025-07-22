@@ -76,7 +76,7 @@ public class EstimateService {
         numericStyle.setBorderRight(BorderStyle.THIN);
 
         // Заголовки
-        String[] headers = {"Наименование работ", "Количество", "Стоимость за единицу (AED)", "Итого (AED)"};
+        String[] headers = {" Наименование работ ", " Количество ", " Стоимость за ед., AED ", " Итого, AED "};
         Row headerRow = sheet.createRow(0);
         headerRow.setHeightInPoints(30);
         for (int i = 0; i < headers.length; i++) {
@@ -94,12 +94,12 @@ public class EstimateService {
 
             // 1. Наименование работ
             Cell nameCell = row.createCell(0);
-            nameCell.setCellValue(item.getWork().getName());
+            nameCell.setCellValue(" " + item.getWork().getName() + " ");
             nameCell.setCellStyle(dataStyle);
 
             // 2. Количество + единица (пример: 76 шт)
             Cell quantityCell = row.createCell(1);
-            String quantityWithUnit = String.format("%.0f %s", item.getQuantity(), item.getWork().getUnit());
+            String quantityWithUnit = String.format("%.2f %s", item.getQuantity(), item.getWork().getUnit());
             quantityCell.setCellValue(quantityWithUnit);
             quantityCell.setCellStyle(dataStyle);
 
