@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Работы</title>
+
+    <title>База работ | CYFR</title>
+
+    <!-- Стандартный favicon для старых браузеров -->
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+
+    <!-- PNG иконки для современных браузеров -->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/img/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/img/favicon-16x16.png}">
+
+    <!-- Apple iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/apple-touch-icon.png}">
+
+    <!-- Android Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/android-chrome-192x192.png}">
+    <link rel="icon" type="image/png" sizes="512x512" th:href="@{/img/android-chrome-512x512.png}">
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" th:href="@{/img/site.webmanifest}">
+
+    <!-- Цвет вкладки для Chrome на Android -->
+    <meta name="theme-color" content="#ffffff">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <style>
         body {
             background-color: #ede7e1;
@@ -243,10 +266,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/works">Работы <span class="sr-only">(текущая)</span></a>
+                    <a class="nav-link" href="/works">База работ <span class="sr-only">(текущая)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/estimate">Смета</a>
+                    <a class="nav-link" href="/estimate">Калькулятор смет</a>
                 </li>
             </ul>
         </div>
@@ -298,7 +321,7 @@
                     </div>
                     <div class="form-row mt-2">
                         <div class="col-md-6 mb-2 mb-md-0">
-                            <input type="number" step="0.01" th:field="*{costPrice}" placeholder="Себестоимость"
+                            <input type="number" step="0.01" th:field="*{costPrice}" placeholder="Себестоимость, AED"
                                    class="form-control" required/>
                         </div>
                         <div class="col-md-6">
