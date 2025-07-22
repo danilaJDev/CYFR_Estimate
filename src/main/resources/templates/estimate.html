@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Смета</title>
+
+    <title>Калькулятор смет | CYFR</title>
+
+    <!-- Стандартный favicon для старых браузеров -->
+    <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+
+    <!-- PNG иконки для современных браузеров -->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/img/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/img/favicon-16x16.png}">
+
+    <!-- Apple iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/apple-touch-icon.png}">
+
+    <!-- Android Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" th:href="@{/img/android-chrome-192x192.png}">
+    <link rel="icon" type="image/png" sizes="512x512" th:href="@{/img/android-chrome-512x512.png}">
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" th:href="@{/img/site.webmanifest}">
+
+    <!-- Цвет вкладки для Chrome на Android -->
+    <meta name="theme-color" content="#ffffff">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <style>
         body {
             background-color: #ede7e1;
@@ -207,7 +230,7 @@
         }
 
         .table thead th {
-            background-color: #f8f9fa; /* светло-серая заливка для заголовков */
+            background-color: #f8f9fa;
             font-weight: 600;
             border: 1px solid #dee2e6;
             color: #333;
@@ -232,7 +255,7 @@
         }
 
         .section-content.show {
-            max-height: 2000px;
+            max-height: 100%;
             opacity: 1;
         }
 
@@ -294,10 +317,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/works">Работы</a>
+                    <a class="nav-link" href="/works">База работ</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/estimate">Смета <span class="sr-only">(текущая)</span></a>
+                    <a class="nav-link" href="/estimate">Калькулятор смет <span class="sr-only">(текущая)</span></a>
                 </li>
             </ul>
         </div>
@@ -338,6 +361,14 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="text-right mt-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-sm collapse-btn"
+                            th:attr="data-section-id=${sectionStat.index}">
+                        Свернуть секцию
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -356,7 +387,7 @@
                 <th>Наименование работы</th>
                 <th>Ед. изм.</th>
                 <th>Количество</th>
-                <th>Цена для заказчика, AED</th>
+                <th>Цена за единицу, AED</th>
                 <th>Коэффициент</th>
                 <th>Итого, AED</th>
             </tr>
@@ -383,7 +414,8 @@
                     <span th:text="${#numbers.formatDecimal(item.work.clientPrice, 1, 2)}"></span> AED
                     x <span th:text="${#numbers.formatDecimal(item.coefficient, 1, 2)}"></span>
                 </div>
-                <div class="font-weight-bold text-dark" th:text="'Итог: ' + ${#numbers.formatDecimal(item.totalCost, 1, 2)} + ' AED'"></div>
+                <div class="font-weight-bold text-dark"
+                     th:text="'Итог: ' + ${#numbers.formatDecimal(item.totalCost, 1, 2)} + ' AED'"></div>
             </div>
         </div>
     </div>
@@ -400,10 +432,19 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.unit-label').forEach(el => {
             let text = el.textContent.trim();
-
             if (text === 'м2' || text === 'м²') {
                 el.innerHTML = 'м<sup>2</sup>';
             }
+        });
+
+        document.querySelectorAll('.collapse-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const sectionId = button.getAttribute('data-section-id');
+                const content = document.getElementById("section-content-" + sectionId);
+                const icon = document.getElementById("icon-section-" + sectionId);
+                content.classList.remove("show");
+                icon.textContent = "＋";
+            });
         });
     });
 </script>
