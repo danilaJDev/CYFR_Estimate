@@ -48,4 +48,8 @@ public class WorkService {
     public void deleteSection(Long id) {
         sectionRepository.deleteById(id);
     }
+
+    public List<Work> getWorksByIds(List<Long> ids) {
+        return workRepository.findAllById(ids);
+    }
 }

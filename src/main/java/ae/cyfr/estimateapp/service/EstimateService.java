@@ -38,10 +38,10 @@ public class EstimateService {
         // Шрифты
         org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
         headerFont.setBold(true);
-        headerFont.setFontHeightInPoints((short) 12);
+        headerFont.setFontHeightInPoints((short) 16);
 
         org.apache.poi.ss.usermodel.Font dataFont = workbook.createFont();
-        dataFont.setFontHeightInPoints((short) 11);
+        dataFont.setFontHeightInPoints((short) 14);
 
         // Стиль заголовков
         CellStyle headerStyle = workbook.createCellStyle();
@@ -64,6 +64,16 @@ public class EstimateService {
         dataStyle.setBorderLeft(BorderStyle.THIN);
         dataStyle.setBorderRight(BorderStyle.THIN);
 
+        // Стиль для наименования работ (выравнивание по левому краю)
+        CellStyle nameColumnDataStyle = workbook.createCellStyle();
+        nameColumnDataStyle.setFont(dataFont);
+        nameColumnDataStyle.setAlignment(HorizontalAlignment.LEFT);
+        nameColumnDataStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        nameColumnDataStyle.setBorderBottom(BorderStyle.THIN);
+        nameColumnDataStyle.setBorderTop(BorderStyle.THIN);
+        nameColumnDataStyle.setBorderLeft(BorderStyle.THIN);
+        nameColumnDataStyle.setBorderRight(BorderStyle.THIN);
+
         // Стиль числовых ячеек
         CellStyle numericStyle = workbook.createCellStyle();
         numericStyle.setFont(dataFont);
@@ -76,7 +86,7 @@ public class EstimateService {
         numericStyle.setBorderRight(BorderStyle.THIN);
 
         // Заголовки
-        String[] headers = {" Наименование работ ", " Количество ", " Стоимость за ед., AED ", " Итого, AED "};
+        String[] headers = {"Наименование работ", "Количество", "Стоимость за ед., AED", "Итого, AED"};
         Row headerRow = sheet.createRow(0);
         headerRow.setHeightInPoints(30);
         for (int i = 0; i < headers.length; i++) {
@@ -94,10 +104,10 @@ public class EstimateService {
 
             // 1. Наименование работ
             Cell nameCell = row.createCell(0);
-            nameCell.setCellValue(" " + item.getWork().getName() + " ");
-            nameCell.setCellStyle(dataStyle);
+            nameCell.setCellValue(item.getWork().getName());
+            nameCell.setCellStyle(nameColumnDataStyle);
 
-            // 2. Количество + единица (пример: 76 шт)
+            // 2. Количество + единица
             Cell quantityCell = row.createCell(1);
             String quantityWithUnit = String.format("%.2f %s", item.getQuantity(), item.getWork().getUnit());
             quantityCell.setCellValue(quantityWithUnit);
@@ -120,12 +130,14 @@ public class EstimateService {
         // Автоподбор ширины колонок
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
+            int currentWidth = sheet.getColumnWidth(i);
+            sheet.setColumnWidth(i, (int) (currentWidth * 1.1));
         }
 
         // Итоговая строка
         Row totalRow = sheet.createRow(rowNum + 1);
         Cell labelCell = totalRow.createCell(2);
-        labelCell.setCellValue("Итоговая сумма:");
+        labelCell.setCellValue("Итоговая сумма, AED:");
         labelCell.setCellStyle(headerStyle);
 
         Cell valueCell = totalRow.createCell(3);
