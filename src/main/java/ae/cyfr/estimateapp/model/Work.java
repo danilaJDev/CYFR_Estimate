@@ -1,6 +1,5 @@
 package ae.cyfr.estimateapp.model;
 
-import java.math.BigDecimal;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,11 +30,9 @@ public class Work {
     @Column(nullable = false)
     private String unit;
 
-    @Column(nullable = false, scale = 2, precision = 12)
-    private BigDecimal costPrice;
+    private Double costPrice;
 
-    @Column(nullable = false, scale = 2, precision = 12)
-    private BigDecimal clientPrice;
+    private Double clientPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")

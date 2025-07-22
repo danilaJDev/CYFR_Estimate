@@ -26,5 +26,5 @@ public class Section {
     private String name;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Work> work;
+    private List<Work> works;
 }

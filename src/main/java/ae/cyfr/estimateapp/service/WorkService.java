@@ -40,4 +40,12 @@ public class WorkService {
     public Work getWorkById(Long id) {
         return workRepository.findById(id).orElse(null);
     }
+
+    public void deleteWork(Long id) {
+        workRepository.deleteById(id);
+    }
+
+    public void deleteSection(Long id) {
+        sectionRepository.deleteById(id);
+    }
 }
