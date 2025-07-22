@@ -38,10 +38,12 @@ public class EstimateService {
         // Шрифты
         org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
         headerFont.setBold(true);
-        headerFont.setFontHeightInPoints((short) 16);
+        headerFont.setFontName("Times New Roman");
+        headerFont.setFontHeightInPoints((short) 12);
 
         org.apache.poi.ss.usermodel.Font dataFont = workbook.createFont();
-        dataFont.setFontHeightInPoints((short) 14);
+        dataFont.setFontName("Times New Roman");
+        dataFont.setFontHeightInPoints((short) 10);
 
         // Стиль заголовков
         CellStyle headerStyle = workbook.createCellStyle();

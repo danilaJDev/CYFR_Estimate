@@ -117,6 +117,12 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .work-name-column {
+            width: 450px;
+            white-space: normal !important;
+            word-wrap: break-word;
+        }
+
         .form-check {
             position: relative;
             user-select: none;
@@ -384,7 +390,7 @@
         <table class="table table-sm table-bordered text-center">
             <thead class="thead-dark">
             <tr>
-                <th>Наименование работы</th>
+                <th class="work-name-column">Наименование работы</th>
                 <th>Ед. изм.</th>
                 <th>Количество</th>
                 <th>Цена за единицу, AED</th>
@@ -394,7 +400,7 @@
             </thead>
             <tbody>
             <tr th:each="item : ${session.estimates}">
-                <td th:text="${item.work.name}"></td>
+                <td class="text-left work-name-column" th:text="${item.work.name}"></td>
                 <td th:text="${item.work.unit}"></td>
                 <td th:text="${item.quantity}"></td>
                 <td th:text="${item.work.clientPrice}"></td>
