@@ -8,9 +8,12 @@ WORKDIR /app
 # Это позволяет Docker кэшировать слои и не пересобирать зависимости при каждом изменении кода
 COPY pom.xml .
 COPY src ./src
+COPY mvnw .
+COPY .mvn ./.mvn
 
 # Сборка Spring Boot приложения
 # Используем mvnw (Maven Wrapper) для уверенности, что Maven доступен
+RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 # Этап запуска - используется уменьшенный образ OpenJDK для более маленького финального образа
