@@ -11,6 +11,7 @@ import ae.cyfr.estimateapp.model.Estimate;
 import ae.cyfr.estimateapp.model.Work;
 import ae.cyfr.estimateapp.service.EstimateService;
 import ae.cyfr.estimateapp.service.WorkService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,8 +40,13 @@ public class EstimateController {
     }
 
     @GetMapping("/estimate")
-    public String showEstimatePage(Model model) {
+    public String showEstimatePage(Model model, HttpSession session) {
         model.addAttribute("sections", workService.getAllSections());
+        List<Estimate> estimates = (List<Estimate>) session.getAttribute("estimates");
+        if (estimates != null) {
+            double total = estimates.stream().mapToDouble(Estimate::getTotalCost).sum();
+            model.addAttribute("totalSum", total);
+        }
         return "estimate";
     }
 
