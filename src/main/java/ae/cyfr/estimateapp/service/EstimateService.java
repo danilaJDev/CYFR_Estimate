@@ -2,6 +2,10 @@ package ae.cyfr.estimateapp.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import ae.cyfr.estimateapp.model.Estimate;
 import ae.cyfr.estimateapp.repository.EstimateRepository;
@@ -14,6 +18,16 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +49,6 @@ public class EstimateService {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Estimate");
 
-        // Шрифты
         org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
         headerFont.setBold(true);
         headerFont.setFontName("Times New Roman");
@@ -45,7 +58,6 @@ public class EstimateService {
         dataFont.setFontName("Times New Roman");
         dataFont.setFontHeightInPoints((short) 10);
 
-        // Стиль заголовков
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(headerFont);
         headerStyle.setWrapText(true);
@@ -56,7 +68,6 @@ public class EstimateService {
         headerStyle.setBorderLeft(BorderStyle.THIN);
         headerStyle.setBorderRight(BorderStyle.THIN);
 
-        // Стиль обычных ячеек
         CellStyle dataStyle = workbook.createCellStyle();
         dataStyle.setFont(dataFont);
         dataStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -66,7 +77,6 @@ public class EstimateService {
         dataStyle.setBorderLeft(BorderStyle.THIN);
         dataStyle.setBorderRight(BorderStyle.THIN);
 
-        // Стиль для наименования работ (выравнивание по левому краю)
         CellStyle nameColumnDataStyle = workbook.createCellStyle();
         nameColumnDataStyle.setFont(dataFont);
         nameColumnDataStyle.setAlignment(HorizontalAlignment.LEFT);
@@ -76,7 +86,6 @@ public class EstimateService {
         nameColumnDataStyle.setBorderLeft(BorderStyle.THIN);
         nameColumnDataStyle.setBorderRight(BorderStyle.THIN);
 
-        // Стиль числовых ячеек
         CellStyle numericStyle = workbook.createCellStyle();
         numericStyle.setFont(dataFont);
         numericStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
@@ -87,7 +96,6 @@ public class EstimateService {
         numericStyle.setBorderLeft(BorderStyle.THIN);
         numericStyle.setBorderRight(BorderStyle.THIN);
 
-        // Заголовки
         String[] headers = {"Наименование работ", "Количество", "Стоимость за ед., AED", "Итого, AED"};
         Row headerRow = sheet.createRow(0);
         headerRow.setHeightInPoints(30);
@@ -97,31 +105,26 @@ public class EstimateService {
             cell.setCellStyle(headerStyle);
         }
 
-        // Данные
         int rowNum = 1;
         double grandTotal = 0.0;
 
         for (Estimate item : estimates) {
             Row row = sheet.createRow(rowNum++);
 
-            // 1. Наименование работ
             Cell nameCell = row.createCell(0);
             nameCell.setCellValue(item.getWork().getName());
             nameCell.setCellStyle(nameColumnDataStyle);
 
-            // 2. Количество + единица
             Cell quantityCell = row.createCell(1);
             String quantityWithUnit = String.format("%.2f %s", item.getQuantity(), item.getWork().getUnit());
             quantityCell.setCellValue(quantityWithUnit);
             quantityCell.setCellStyle(dataStyle);
 
-            // 3. Стоимость за единицу
             Cell priceCell = row.createCell(2);
             double clientPriceWithCoeff = item.getWork().getClientPrice() * item.getCoefficient();
             priceCell.setCellValue(clientPriceWithCoeff);
             priceCell.setCellStyle(numericStyle);
 
-            // 4. Итоговая сумма
             double total = item.getTotalCost();
             grandTotal += total;
             Cell totalCell = row.createCell(3);
@@ -129,14 +132,12 @@ public class EstimateService {
             totalCell.setCellStyle(numericStyle);
         }
 
-        // Автоподбор ширины колонок
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
             int currentWidth = sheet.getColumnWidth(i);
             sheet.setColumnWidth(i, (int) (currentWidth * 1.1));
         }
 
-        // Итоговая строка
         Row totalRow = sheet.createRow(rowNum + 1);
         Cell labelCell = totalRow.createCell(2);
         labelCell.setCellValue("Итоговая сумма, AED:");
@@ -146,11 +147,95 @@ public class EstimateService {
         valueCell.setCellValue(grandTotal);
         valueCell.setCellStyle(numericStyle);
 
-        // Запись
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
         workbook.close();
 
         return outputStream.toByteArray();
+    }
+
+    public byte[] createEstimateWord(List<Estimate> estimates) throws IOException {
+        try (XWPFDocument document = new XWPFDocument();
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            XWPFParagraph title = document.createParagraph();
+            title.setAlignment(ParagraphAlignment.CENTER);
+            title.setSpacingBefore(120);
+            title.setSpacingAfter(120);
+
+            XWPFRun titleRun = title.createRun();
+            String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            titleRun.setText("Смета от " + currentDate);
+            titleRun.setBold(true);
+            titleRun.setFontSize(16);
+            titleRun.setFontFamily("Times New Roman");
+            titleRun.addBreak();
+
+            XWPFTable table = document.createTable();
+            CTTblWidth tblWidth = table.getCTTbl().addNewTblPr().addNewTblW();
+            tblWidth.setType(STTblWidth.PCT);
+            tblWidth.setW(BigInteger.valueOf(5000));
+            table.getCTTbl().getTblPr().addNewTblLayout().setType(STTblLayoutType.AUTOFIT);
+
+            XWPFTableRow header = table.getRow(0);
+            createWordCell(header, 0, "Наименование работы", true, "50%");
+            createWordCell(header, 1, "Количество", true, "15%");
+            createWordCell(header, 2, "Цена, AED", true, "15%");
+            createWordCell(header, 4, "Итого, AED", true, "20%");
+
+            double totalSum = 0;
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+
+            for (Estimate item : estimates) {
+                XWPFTableRow row = table.createRow();
+                createWordCell(row, 0, item.getWork().getName(), false, null);
+
+                String quantityUnitText = df.format(item.getQuantity()) + " " + item.getWork().getUnit();
+                createWordCell(row, 1, quantityUnitText, false, null);
+                createWordCell(row, 2, df.format(item.getWork().getClientPrice()), false, null);
+                createWordCell(row, 3, df.format(item.getTotalCost()), false, null);
+                totalSum += item.getTotalCost();
+            }
+
+            XWPFParagraph total = document.createParagraph();
+            total.setAlignment(ParagraphAlignment.RIGHT);
+            XWPFRun totalRun = total.createRun();
+            totalRun.addBreak();
+            totalRun.setText("Общая сумма, AED: " + df.format(totalSum));
+            totalRun.setBold(true);
+            totalRun.setFontSize(10);
+            totalRun.setFontFamily("Times New Roman");
+
+            document.write(out);
+            return out.toByteArray();
+        }
+    }
+
+    private void createWordCell(XWPFTableRow row, int cellIndex, String text, boolean isBold, String width) {
+        XWPFTableCell cell = row.getCell(cellIndex);
+        if (cell == null) {
+            cell = row.addNewTableCell();
+        }
+
+        XWPFParagraph paragraph = cell.getParagraphs().get(0);
+
+        while (paragraph.getRuns().size() > 0) {
+            paragraph.removeRun(0);
+        }
+
+        paragraph.setAlignment(cellIndex == 0 ? ParagraphAlignment.LEFT : ParagraphAlignment.CENTER);
+        cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+
+        XWPFRun run = paragraph.createRun();
+        run.setText(text);
+        run.setBold(isBold);
+        run.setFontSize(10);
+        run.setFontFamily("Times New Roman");
+
+        if (width != null) {
+            CTTblWidth cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            cellWidth.setType(STTblWidth.DXA);
+            cellWidth.setW(new BigInteger(String.valueOf(Integer.parseInt(width.replace("%", "")) * 50)));
+        }
     }
 }
