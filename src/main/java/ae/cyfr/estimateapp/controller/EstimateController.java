@@ -39,7 +39,7 @@ public class EstimateController {
         return new ArrayList<>();
     }
 
-    @GetMapping("/estimate")
+    @GetMapping("/")
     public String showEstimatePage(Model model, HttpSession session) {
         model.addAttribute("sections", workService.getAllSections());
         List<Estimate> estimates = (List<Estimate>) session.getAttribute("estimates");
@@ -50,7 +50,7 @@ public class EstimateController {
         return "estimate";
     }
 
-    @PostMapping("/estimate/update")
+    @PostMapping("/update")
     public String updateEstimate(@RequestParam(required = false) List<Long> selectedWorkIds,
                                  @RequestParam(required = false) List<Long> workIds,
                                  @RequestParam(required = false) List<Double> quantities,
@@ -60,7 +60,7 @@ public class EstimateController {
         estimates.clear();
 
         if (selectedWorkIds == null || selectedWorkIds.isEmpty()) {
-            return "redirect:/estimate";
+            return "redirect:/";
         }
 
         List<Work> works = workService.getWorksByIds(selectedWorkIds);
@@ -85,10 +85,10 @@ public class EstimateController {
             }
         }
 
-        return "redirect:/estimate";
+        return "redirect:/";
     }
 
-    @GetMapping("/estimate/export")
+    @GetMapping("/export")
     public ResponseEntity<byte[]> exportEstimate(@ModelAttribute("estimates") List<Estimate> estimates) throws IOException {
         byte[] excelData = estimateService.createEstimateExcel(estimates);
 
