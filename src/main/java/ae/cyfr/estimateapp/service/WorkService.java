@@ -12,41 +12,22 @@ import org.springframework.stereotype.Service;
 public class WorkService {
 
     @Autowired
-    private SectionRepository sectionRepository;
-
-    @Autowired
     private WorkRepository workRepository;
 
-    public List<Section> getAllSections() {
-        return sectionRepository.findAll();
-    }
-
-    public Section saveSection(Section section) {
-        return sectionRepository.save(section);
+    public List<Work> getAllWorks() {
+        return workRepository.findAll();
     }
 
     public Work saveWork(Work work) {
         return workRepository.save(work);
     }
 
-    public List<Work> getAllWorks() {
-        return workRepository.findAll();
-    }
-
-    public Section getSectionById(Long id) {
-        return sectionRepository.findById(id).orElse(null);
-    }
-
-    public Work getWorkById(Long id) {
-        return workRepository.findById(id).orElse(null);
-    }
-
     public void deleteWork(Long id) {
         workRepository.deleteById(id);
     }
 
-    public void deleteSection(Long id) {
-        sectionRepository.deleteById(id);
+    public Work getWorkById(Long id) {
+        return workRepository.findById(id).orElse(null);
     }
 
     public List<Work> getWorksByIds(List<Long> ids) {
