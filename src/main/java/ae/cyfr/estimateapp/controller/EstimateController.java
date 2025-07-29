@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import ae.cyfr.estimateapp.model.Estimate;
 import ae.cyfr.estimateapp.model.Work;
 import ae.cyfr.estimateapp.service.EstimateService;
+import ae.cyfr.estimateapp.service.SectionService;
 import ae.cyfr.estimateapp.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,9 +31,12 @@ public class EstimateController {
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    private SectionService sectionService;
+
     @GetMapping("/")
     public String showEstimatePage(Model model) {
-        model.addAttribute("sections", workService.getAllSections());
+        model.addAttribute("sections", sectionService.getAllSections());
         return "estimate";
     }
 

@@ -3,9 +3,12 @@ package ae.cyfr.estimateapp.model;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
@@ -14,11 +17,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sections")
+@Table(name = "subsections")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Section {
+public class Subsection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +29,11 @@ public class Section {
 
     private String name;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id")
+    private Section section;
+
+    @OneToMany(mappedBy = "subsection", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("name ASC")
-    private List<Subsection> subsections;
+    private List<Work> works;
 }

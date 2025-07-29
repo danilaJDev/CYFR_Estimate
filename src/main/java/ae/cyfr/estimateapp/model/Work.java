@@ -35,6 +35,6 @@ public class Work {
     private Double clientPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id")
-    private Section section;
+    @JoinColumn(name = "subsection_id")
+    private Subsection subsection;
 }
