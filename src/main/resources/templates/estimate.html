@@ -419,9 +419,14 @@
          id="compact-estimate-container">
     </div>
 
-    <div class="text-right my-3">
+    <div class="text-right my-2 d-flex justify-content-end align-items-center">
+        <label for="total-coefficient" class="font-weight-bold mb-0 mr-2">Общий коэффициент:</label>
+        <input type="number" step="0.01" value="1.0" class="form-control" id="total-coefficient" style="width: 80px;" onchange="updateEstimateTable()">
+    </div>
+
+    <div class="text-right">
         <h6 class="font-weight-bold">
-            Общая сумма, AED:
+            Общая сумма сметы, AED:
             <span id="total-sum">0</span>
         </h6>
     </div>
@@ -501,7 +506,6 @@
             noResultsDiv.style.display = anyResultsFound || !searchTerm ? 'none' : 'block';
         });
 
-        // Format units on load
         document.querySelectorAll('.unit-label').forEach(el => {
             if (el.textContent.trim().includes('м2')) {
                 el.innerHTML = 'м<sup>2</sup>';
@@ -544,6 +548,9 @@
         const estimateTbody = document.getElementById('estimate-tbody');
         const compactContainer = document.getElementById('compact-estimate-container');
         const totalSumSpan = document.getElementById('total-sum');
+        const totalCoefficientInput = document.getElementById('total-coefficient');
+
+        const totalCoefficient = parseFloat(totalCoefficientInput.value) || 1.0;
 
         let tableHtml = '';
         let compactHtml = '';
@@ -558,7 +565,10 @@
             const price = parseFloat(item.dataset.workPrice) || 0;
             const quantity = parseFloat(item.querySelector('.quantity-input').value) || 0;
             const coefficient = parseFloat(item.querySelector('.coefficient-input').value) || 1.0;
-            const itemTotal = quantity * price * coefficient;
+
+            const effectiveCoefficient = coefficient * totalCoefficient;
+            const itemTotal = quantity * price * effectiveCoefficient;
+
             totalSum += itemTotal;
 
             tableHtml += `
@@ -566,7 +576,7 @@
                     <td class="text-left work-name-column">${name}</td>
                     <td>${quantity.toFixed(2)} ${unit}</td>
                     <td>${price.toFixed(2)}</td>
-                    <td>${coefficient.toFixed(2)}</td>
+                    <td>${effectiveCoefficient.toFixed(2)}</td>
                     <td>${itemTotal.toFixed(2)}</td>
                 </tr>
             `;
@@ -578,7 +588,7 @@
                         <div class="unit-label">${quantity.toFixed(2)} ${unit}</div>
                         <div>
                             <span>${price.toFixed(2)}</span> AED
-                            x <span>${coefficient.toFixed(2)}</span>
+                            x <span>${effectiveCoefficient.toFixed(2)}</span>
                         </div>
                         <div class="font-weight-bold text-dark">Итог: ${itemTotal.toFixed(2)} AED</div>
                     </div>
@@ -610,6 +620,9 @@
             `);
             hasItems = true;
         });
+
+        const totalCoefficient = document.getElementById('total-coefficient').value;
+        exportForm.insertAdjacentHTML('beforeend', `<input type="hidden" name="totalCoefficient" value="${totalCoefficient}" />`);
 
         if (hasItems) {
             exportForm.submit();
