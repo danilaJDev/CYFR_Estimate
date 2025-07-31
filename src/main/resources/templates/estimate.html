@@ -32,6 +32,7 @@
         body {
             background-color: #ede7e1;
             font-family: 'TildaSans', Arial, sans-serif;
+            padding-bottom: 40px;
         }
 
         .container {
@@ -61,7 +62,7 @@
             color: #ffffff;
         }
 
-        .btn-success, .btn {
+        .btn {
             color: #000000;
             background-image: linear-gradient(0.16turn, rgba(93, 90, 85, 1) 0%, rgba(197, 182, 154, 1) 31%, rgba(252, 235, 206, 1) 100%);
             border-radius: 20px;
@@ -72,6 +73,42 @@
         .btn:hover {
             text-decoration: none;
             opacity: 0.9;
+        }
+
+        h2, h3, h4 {
+            font-family: 'TildaSans', Arial, sans-serif;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+        }
+
+        .table {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+            color: #333;
+        }
+
+        .table td, .table th {
+            border: 1px solid #dee2e6;
+            vertical-align: middle !important;
+            padding: 0.5rem;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f3f3f3;
+        }
+
+        .work-name-column {
+            width: 250px;
+            white-space: normal !important;
+            word-wrap: break-word;
         }
 
         .section-header, .subsection-header {
@@ -88,7 +125,6 @@
         }
 
         .subsection-header {
-            background-color: #f8f9fa;
             margin-left: 1rem;
         }
 
@@ -117,12 +153,6 @@
         .work-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .work-name-column {
-            width: 250px;
-            white-space: normal !important;
-            word-wrap: break-word;
         }
 
         .form-check {
@@ -219,28 +249,6 @@
             margin-left: 10px;
         }
 
-        .table {
-            background-color: #ffffff;
-        }
-
-        .table thead th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            border: 1px solid #dee2e6;
-            color: #333;
-        }
-
-        .table td, .table th {
-            border: 1px solid #dee2e6;
-            vertical-align: middle;
-            white-space: nowrap;
-            padding: 0.5rem;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: #f3f3f3;
-        }
-
         .section-content, .subsection-content {
             overflow: hidden;
             max-height: 0;
@@ -255,14 +263,6 @@
 
         .subsection-content {
             padding-left: 1rem;
-        }
-
-        h2, h3, h4 {
-            font-family: 'TildaSans', Arial, sans-serif;
-        }
-
-        h4 {
-            font-size: 1.2rem;
         }
 
         @media (max-width: 767.98px) {
@@ -336,7 +336,7 @@
 </nav>
 
 <div class="container">
-    <div class="mb-4 my-4 d-flex justify-content-center">
+    <div class="my-5 d-flex justify-content-center">
         <input type="text" id="work-search" class="form-control" style="max-width: 500px"
                placeholder="Поиск по названию работы...">
     </div>
@@ -346,8 +346,11 @@
     </div>
 
     <div th:each="section, sectionStat : ${sections}" class="section-container">
-        <div class="section-header" th:attr="data-section-id=${sectionStat.index}" onclick="toggleSection(this)">
+        <div class="section-header" th:attr="data-section-id=${sectionStat.index}"
+             onclick="toggleSection(this)">
+
             <h3 th:text="${section.name}" class="mb-0 font-weight-bold"></h3>
+
             <span class="toggle-icon" th:id="'icon-section-' + ${sectionStat.index}">＋</span>
         </div>
 
@@ -357,7 +360,9 @@
                 <div class="subsection-header"
                      th:attr="data-section-id=${sectionStat.index}, data-subsection-id=${subStat.index}"
                      onclick="toggleSubsection(this)">
+
                     <h4 th:text="${subsection.name}" class="mb-0 font-weight-bold"></h4>
+
                     <span class="toggle-icon"
                           th:id="'icon-subsection-' + ${sectionStat.index} + '-' + ${subStat.index}">＋</span>
                 </div>
@@ -370,10 +375,12 @@
                             <input class="form-check-input" type="checkbox"
                                    th:id="'work' + ${sectionStat.index} + '-' + ${subStat.index} + '-' + ${workStat.index}"
                                    onchange="toggleInputs(this); updateEstimateTable();">
+
                             <label class="form-check-label"
                                    th:for="'work' + ${sectionStat.index} + '-' + ${subStat.index} + '-' + ${workStat.index}"
                                    th:text="${work.name}"></label>
                         </div>
+
                         <div class="row inputs-row mt-2">
                             <div class="col-md-6">
                                 <label>
@@ -419,9 +426,15 @@
          id="compact-estimate-container">
     </div>
 
-    <div class="text-right my-3">
+    <div class="text-right my-2 d-flex justify-content-end align-items-center">
+        <label for="total-coefficient" class="font-weight-bold mb-0 mr-2">Общий коэффициент:</label>
+        <input type="number" step="0.01" value="1.0" class="form-control" id="total-coefficient" style="width: 80px;"
+               onchange="updateEstimateTable()">
+    </div>
+
+    <div class="text-right">
         <h6 class="font-weight-bold">
-            Общая сумма, AED:
+            Общая сумма сметы, AED:
             <span id="total-sum">0</span>
         </h6>
     </div>
@@ -429,8 +442,8 @@
     <form id="exportForm" method="post" style="display: none;"></form>
 
     <div class="text-center my-3 export-buttons">
-        <button type="button" onclick="prepareAndSubmitExport('excel')" class="btn btn-success mr-3">Экспорт в Excel</button>
-        <button type="button" onclick="prepareAndSubmitExport('word')" class="btn btn-primary">Экспорт в Word</button>
+        <button type="button" onclick="prepareAndSubmitExport('excel')" class="btn mr-3">Экспорт в Excel</button>
+        <button type="button" onclick="prepareAndSubmitExport('word')" class="btn">Экспорт в Word</button>
     </div>
 </div>
 
@@ -501,7 +514,6 @@
             noResultsDiv.style.display = anyResultsFound || !searchTerm ? 'none' : 'block';
         });
 
-        // Format units on load
         document.querySelectorAll('.unit-label').forEach(el => {
             if (el.textContent.trim().includes('м2')) {
                 el.innerHTML = 'м<sup>2</sup>';
@@ -544,6 +556,9 @@
         const estimateTbody = document.getElementById('estimate-tbody');
         const compactContainer = document.getElementById('compact-estimate-container');
         const totalSumSpan = document.getElementById('total-sum');
+        const totalCoefficientInput = document.getElementById('total-coefficient');
+
+        const totalCoefficient = parseFloat(totalCoefficientInput.value) || 1.0;
 
         let tableHtml = '';
         let compactHtml = '';
@@ -558,7 +573,10 @@
             const price = parseFloat(item.dataset.workPrice) || 0;
             const quantity = parseFloat(item.querySelector('.quantity-input').value) || 0;
             const coefficient = parseFloat(item.querySelector('.coefficient-input').value) || 1.0;
-            const itemTotal = quantity * price * coefficient;
+
+            const effectiveCoefficient = coefficient * totalCoefficient;
+            const itemTotal = quantity * price * effectiveCoefficient;
+
             totalSum += itemTotal;
 
             tableHtml += `
@@ -566,7 +584,7 @@
                     <td class="text-left work-name-column">${name}</td>
                     <td>${quantity.toFixed(2)} ${unit}</td>
                     <td>${price.toFixed(2)}</td>
-                    <td>${coefficient.toFixed(2)}</td>
+                    <td>${effectiveCoefficient.toFixed(2)}</td>
                     <td>${itemTotal.toFixed(2)}</td>
                 </tr>
             `;
@@ -578,7 +596,7 @@
                         <div class="unit-label">${quantity.toFixed(2)} ${unit}</div>
                         <div>
                             <span>${price.toFixed(2)}</span> AED
-                            x <span>${coefficient.toFixed(2)}</span>
+                            x <span>${effectiveCoefficient.toFixed(2)}</span>
                         </div>
                         <div class="font-weight-bold text-dark">Итог: ${itemTotal.toFixed(2)} AED</div>
                     </div>
@@ -610,6 +628,9 @@
             `);
             hasItems = true;
         });
+
+        const totalCoefficient = document.getElementById('total-coefficient').value;
+        exportForm.insertAdjacentHTML('beforeend', `<input type="hidden" name="totalCoefficient" value="${totalCoefficient}" />`);
 
         if (hasItems) {
             exportForm.submit();

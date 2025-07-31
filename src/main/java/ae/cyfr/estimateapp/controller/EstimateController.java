@@ -44,9 +44,10 @@ public class EstimateController {
     public ResponseEntity<byte[]> exportEstimateToExcel(
             @RequestParam(required = false) List<Long> workIds,
             @RequestParam(required = false) List<Double> quantities,
-            @RequestParam(required = false) List<Double> coefficients) throws IOException {
+            @RequestParam(required = false) List<Double> coefficients,
+            @RequestParam(required = false) Double totalCoefficient) throws IOException {
 
-        List<Estimate> estimates = prepareEstimateData(workIds, quantities, coefficients);
+        List<Estimate> estimates = prepareEstimateData(workIds, quantities, coefficients, totalCoefficient);
         byte[] excelData = estimateService.createEstimateExcel(estimates);
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy__HH.mm"));
@@ -65,16 +66,16 @@ public class EstimateController {
     public ResponseEntity<byte[]> exportEstimateToWord(
             @RequestParam(required = false) List<Long> workIds,
             @RequestParam(required = false) List<Double> quantities,
-            @RequestParam(required = false) List<Double> coefficients) throws IOException {
+            @RequestParam(required = false) List<Double> coefficients,
+            @RequestParam(required = false) Double totalCoefficient) throws IOException {
 
-        List<Estimate> estimates = prepareEstimateData(workIds, quantities, coefficients);
+        List<Estimate> estimates = prepareEstimateData(workIds, quantities, coefficients, totalCoefficient);
         byte[] wordData = estimateService.createEstimateWord(estimates);
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy__HH.mm"));
         String filename = "Estimate__" + timestamp + ".docx";
 
         HttpHeaders headers = new HttpHeaders();
-        // Set correct content type for .docx files
         headers.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
         headers.setContentDispositionFormData("attachment", filename);
 
@@ -83,11 +84,13 @@ public class EstimateController {
                 .body(wordData);
     }
 
-    private List<Estimate> prepareEstimateData(List<Long> workIds, List<Double> quantities, List<Double> coefficients) {
+    private List<Estimate> prepareEstimateData(List<Long> workIds, List<Double> quantities, List<Double> coefficients, Double totalCoefficient) {
         List<Estimate> estimates = new ArrayList<>();
         if (workIds == null || workIds.isEmpty()) {
             return estimates;
         }
+
+        final double finalTotalCoefficient = (totalCoefficient != null && totalCoefficient > 0) ? totalCoefficient : 1.0;
 
         Map<Long, Work> workMap = workService.getWorksByIds(workIds).stream()
                 .collect(Collectors.toMap(Work::getId, w -> w));
@@ -98,12 +101,14 @@ public class EstimateController {
             if (work != null) {
                 Estimate item = new Estimate();
                 item.setWork(work);
-                if (quantities != null && i < quantities.size()) {
-                    item.setQuantity(quantities.get(i));
-                }
-                if (coefficients != null && i < coefficients.size()) {
-                    item.setCoefficient(coefficients.get(i));
-                }
+
+                double quantity = (quantities != null && i < quantities.size()) ? quantities.get(i) : 1.0;
+                item.setQuantity(quantity);
+
+                double baseCoefficient = (coefficients != null && i < coefficients.size()) ? coefficients.get(i) : 1.0;
+                double effectiveCoefficient = baseCoefficient * finalTotalCoefficient;
+                item.setCoefficient(effectiveCoefficient);
+
                 item.setTotalCost(item.getQuantity() * item.getCoefficient() * work.getClientPrice());
                 estimates.add(item);
             }

@@ -25,6 +25,10 @@ public class SubsectionService {
         return subsectionRepository.findById(subsectionId).orElse(null);
     }
 
+    public List<Subsection> getAllSubsectionBySectionId(Long sectionId) {
+        return subsectionRepository.findAllSubsectionBySectionId(sectionId);
+    }
+
     public void deleteSubsection(Long subsectionId) {
         subsectionRepository.deleteById(subsectionId);
     }

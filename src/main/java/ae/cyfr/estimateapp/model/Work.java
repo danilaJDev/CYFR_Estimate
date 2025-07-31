@@ -1,5 +1,6 @@
 package ae.cyfr.estimateapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,5 +37,6 @@ public class Work {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subsection_id")
+    @JsonIgnore
     private Subsection subsection;
 }

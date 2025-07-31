@@ -1,6 +1,7 @@
 package ae.cyfr.estimateapp.model;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,6 +32,7 @@ public class Subsection {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
+    @JsonIgnore
     private Section section;
 
     @OneToMany(mappedBy = "subsection", cascade = CascadeType.ALL, orphanRemoval = true)
