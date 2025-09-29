@@ -6,8 +6,12 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import ae.cyfr.estimateapp.model.Estimate;
+import ae.cyfr.estimateapp.model.Work;
 import ae.cyfr.estimateapp.repository.EstimateRepository;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,6 +40,41 @@ public class EstimateService {
 
     @Autowired
     private EstimateRepository estimateRepository;
+
+    @Autowired
+    private WorkService workService;
+
+    public List<Estimate> prepareEstimateData(List<Long> workIds, List<Double> quantities, List<Double> coefficients, Double totalCoefficient) {
+        List<Estimate> estimates = new ArrayList<>();
+        if (workIds == null || workIds.isEmpty()) {
+            return estimates;
+        }
+
+        final double finalTotalCoefficient = (totalCoefficient != null && totalCoefficient > 0) ? totalCoefficient : 1.0;
+
+        Map<Long, Work> workMap = workService.getWorksByIds(workIds).stream()
+                .collect(Collectors.toMap(Work::getId, w -> w));
+
+        for (int i = 0; i < workIds.size(); i++) {
+            Long currentWorkId = workIds.get(i);
+            Work work = workMap.get(currentWorkId);
+            if (work != null) {
+                Estimate item = new Estimate();
+                item.setWork(work);
+
+                double quantity = (quantities != null && i < quantities.size()) ? quantities.get(i) : 1.0;
+                item.setQuantity(quantity);
+
+                double baseCoefficient = (coefficients != null && i < coefficients.size()) ? coefficients.get(i) : 1.0;
+                double effectiveCoefficient = baseCoefficient * finalTotalCoefficient;
+                item.setCoefficient(effectiveCoefficient);
+
+                item.setTotalCost(item.getQuantity() * item.getCoefficient() * work.getClientPrice());
+                estimates.add(item);
+            }
+        }
+        return estimates;
+    }
 
     public Estimate saveEstimate(Estimate estimate) {
         return estimateRepository.save(estimate);

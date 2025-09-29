@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<div class="container">
+    <h1 class="mt-5">Личный кабинет</h1>
+    <h2 class="mt-4">Мои сметы</h2>
+    <div th:if="${estimateGroups.isEmpty()}">
+        <p>У вас нет сохраненных смет.</p>
+    </div>
+    <table class="table table-striped" th:if="${!estimateGroups.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Название сметы</th>
+            <th>Дата создания</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="group : ${estimateGroups}">
+            <td th:text="${group.name}"></td>
+            <td th:text="${#temporals.format(group.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            <td>
+                <a th:href="@{/edit-estimate/{id}(id=${group.id})}" class="btn btn-primary btn-sm">Редактировать</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

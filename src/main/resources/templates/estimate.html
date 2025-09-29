@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -314,26 +314,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="/img/CYFR_LOGO.png" alt="Logo">
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/works">База работ</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/">Калькулятор смет <span class="sr-only">(текущая)</span></a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{header :: header}"></div>
 
 <div class="container">
     <div class="my-5 d-flex justify-content-center">
@@ -443,7 +424,8 @@
 
     <div class="text-center my-3 export-buttons">
         <button type="button" onclick="prepareAndSubmitExport('excel')" class="btn mr-3">Экспорт в Excel</button>
-        <button type="button" onclick="prepareAndSubmitExport('word')" class="btn">Экспорт в Word</button>
+        <button type="button" onclick="prepareAndSubmitExport('word')" class="btn mr-3">Экспорт в Word</button>
+        <button type="button" onclick="prepareAndSubmitSave()" class="btn" sec:authorize="hasRole('ESTIMATOR')">Сохранить</button>
     </div>
 </div>
 
@@ -636,6 +618,36 @@
             exportForm.submit();
         } else {
             alert('Пожалуйста, выберите хотя бы одну работу для экспорта.');
+        }
+    }
+
+    function prepareAndSubmitSave() {
+        const exportForm = document.getElementById('exportForm');
+        exportForm.innerHTML = '';
+        exportForm.action = '/save-estimate';
+
+        let hasItems = false;
+        document.querySelectorAll('.work-item .form-check-input:checked').forEach(checkbox => {
+            const item = checkbox.closest('.work-item');
+            const id = item.dataset.workId;
+            const quantity = item.querySelector('.quantity-input').value;
+            const coefficient = item.querySelector('.coefficient-input').value;
+
+            exportForm.insertAdjacentHTML('beforeend', `
+                <input type="hidden" name="workIds" value="${id}" />
+                <input type="hidden" name="quantities" value="${quantity}" />
+                <input type="hidden" name="coefficients" value="${coefficient}" />
+            `);
+            hasItems = true;
+        });
+
+        const totalCoefficient = document.getElementById('total-coefficient').value;
+        exportForm.insertAdjacentHTML('beforeend', `<input type="hidden" name="totalCoefficient" value="${totalCoefficient}" />`);
+
+        if (hasItems) {
+            exportForm.submit();
+        } else {
+            alert('Пожалуйста, выберите хотя бы одну работу для сохранения.');
         }
     }
 </script>

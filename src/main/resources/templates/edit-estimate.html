@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование сметы</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<div class="container-fluid mt-5">
+    <h1>Редактирование сметы</h1>
+    <h2 th:text="${estimateGroup.name}"></h2>
+
+    <form id="estimate-form" method="post" th:action="@{/update-estimate/{id}(id=${estimateGroup.id})}">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Доступные работы</h2>
+                <!-- Accordion with all works -->
+                <div id="accordion">
+                    <div class="card" th:each="section : ${sections}">
+                        <div class="card-header" th:id="'heading' + ${section.id}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" th:data-target="'#collapse' + ${section.id}" aria-expanded="true" th:aria-controls="'collapse' + ${section.id}">
+                                    <span th:text="${section.name}"></span>
+                                </button>
+                            </h5>
+                        </div>
+                        <div th:id="'collapse' + ${section.id}" class="collapse" th:aria-labelledby="'heading' + ${section.id}" data-parent="#accordion">
+                            <div class="card-body">
+                                <div th:each="subsection : ${section.subsections}">
+                                    <h6 th:text="${subsection.name}"></h6>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr th:each="work : ${subsection.works}" class="work-row"
+                                            th:attr="data-work-id=${work.id}, data-work-name=${work.name}, data-work-unit=${work.unit}, data-client-price=${work.clientPrice}">
+                                            <td th:text="${work.name}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2>Выбранные работы</h2>
+                <table class="table" id="selected-works-table">
+                    <thead>
+                    <tr>
+                        <th>Работа</th>
+                        <th>Количество</th>
+                        <th>Коэффициент</th>
+                        <th>Цена</th>
+                        <th>Итого</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Pre-populate with existing estimate items -->
+                    <tr th:each="item : ${estimateGroup.estimates}" th:attr="data-work-id=${item.work.id}">
+                        <td>
+                            <input type="hidden" name="workIds" th:value="${item.work.id}" />
+                            <span th:text="${item.work.name}"></span>
+                        </td>
+                        <td><input type="number" name="quantities" class="form-control" th:value="${item.quantity}" step="0.01" onchange="updateRowTotal(this)"></td>
+                        <td><input type="number" name="coefficients" class="form-control" th:value="${item.coefficient}" step="0.01" onchange="updateRowTotal(this)"></td>
+                        <td class="price" th:text="${item.work.clientPrice}"></td>
+                        <td class="total" th:text="${item.totalCost}"></td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Удалить</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <label for="totalCoefficient">Общий коэффициент</label>
+                    <input type="number" id="totalCoefficient" name="totalCoefficient" class="form-control" value="1.0" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.work-row').on('click', function() {
+            var workId = $(this).data('work-id');
+            var workName = $(this).data('work-name');
+            var workUnit = $(this).data('work-unit');
+            var clientPrice = $(this).data('client-price');
+
+            var newRow = '<tr data-work-id="' + workId + '">' +
+                '<td><input type="hidden" name="workIds" value="' + workId + '"/>' + workName + '</td>' +
+                '<td><input type="number" name="quantities" class="form-control" value="1" step="0.01" onchange="updateRowTotal(this)"></td>' +
+                '<td><input type="number" name="coefficients" class="form-control" value="1.0" step="0.01" onchange="updateRowTotal(this)"></td>' +
+                '<td class="price">' + clientPrice + '</td>' +
+                '<td class="total">' + clientPrice + '</td>' +
+                '<td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Удалить</button></td>' +
+                '</tr>';
+            $('#selected-works-table tbody').append(newRow);
+        });
+    });
+
+    function removeRow(button) {
+        $(button).closest('tr').remove();
+    }
+
+    function updateRowTotal(input) {
+        var row = $(input).closest('tr');
+        var quantity = parseFloat(row.find('input[name="quantities"]').val()) || 0;
+        var coefficient = parseFloat(row.find('input[name="coefficients"]').val()) || 0;
+        var price = parseFloat(row.find('.price').text()) || 0;
+        var total = quantity * coefficient * price;
+        row.find('.total').text(total.toFixed(2));
+    }
+</script>
+
+</body>
+</html>

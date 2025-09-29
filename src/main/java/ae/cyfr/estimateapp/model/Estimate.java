@@ -23,6 +23,10 @@ public class Estimate {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "estimate_group_id")
+    private EstimateGroup estimateGroup;
+
+    @ManyToOne
     @JoinColumn(name = "work_id")
     private Work work;
 
